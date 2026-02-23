@@ -56,3 +56,7 @@ class LogoutView(APIView):
             'message': 'Siz tizimdan chiqdingiz'
         }, status=status.HTTP_200_OK)
 
+
+
+
+
