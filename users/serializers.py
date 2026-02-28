@@ -48,3 +48,25 @@ class SignUpSerializer(serializers.ModelSerializer):
         )
 
         return user
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUSer
+        fields = '__all__'
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUSer
+        fields = ['username', 'phone_number', 'address']
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get('username', instance.username)
+        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
+        instance.address = validated_data.get('address', instance.address)
+
+        instance.save()
+        return instance
+
+

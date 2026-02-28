@@ -60,3 +60,61 @@ class ProductListCreateView(GenericAPIView):
         }
 
         return Response(data)
+
+
+class ProductUpdateDetailDestroyView(GenericAPIView):
+    serializer_class = ProductSerializer
+
+    def get_object(self, pk):
+        product = Product.objects.filter(pk=pk).first()
+        return product
+
+    def put(self, request, pk):
+        product = self.get_object(pk)
+        serializer = self.get_serializer(product, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = {
+            'status': status.HTTP_200_OK,
+            'message': 'Product update',
+            "data": serializer.data
+        }
+        return Response(data)
+
+    def patch(self, request, pk):
+        product = self.get_object(pk)
+        serializer = self.get_serializer(product, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = {
+            'status': status.HTTP_200_OK,
+            'message': 'Product update',
+            "data": serializer.data
+        }
+
+        return Response(data)
+
+    def get(self, request, pk):
+        user = self.get_object(pk)
+        serializer = self.get_serializer(user)
+        data = {
+            'status': status.HTTP_200_OK,
+            'massage': 'user',
+            'data': serializer.data
+        }
+        return Response(data)
+
+    def delete(self, request, pk):
+        user = self.get_object(pk)
+        if user is None:
+            data = {
+                'status': status.HTTP_404_NOT_FOUND,
+                'massage': 'User topilmadi',
+            }
+            raise ValidationError(data)
+        user.delete()
+        data = {
+            'status': status.HTTP_204_NO_CONTENT,
+            'massage': 'user ochirlidi',
+        }
+        return Response(data)

@@ -1,10 +1,8 @@
 from django.shortcuts import render
-
-from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from .models import CustomUSer
-from .serializers import SignUpSerializer
+from .serializers import SignUpSerializer, ProfileSerializer, ProfileUpdateSerializer
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import ValidationError
@@ -56,6 +54,34 @@ class LogoutView(APIView):
             'message': 'Siz tizimdan chiqdingiz'
         }, status=status.HTTP_200_OK)
 
+
+class ProfileView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        serializer = ProfileSerializer(user)
+
+        response = {
+            'status': status.HTTP_200_OK,
+            'data': serializer.data
+        }
+
+        return Response(response)
+
+
+class ProfileUpdateView(APIView):
+    def patch(self, request):
+        user = request.user
+        serializers = ProfileUpdateSerializer(user, data=request.data, partial=True)
+        serializers.is_valid(raise_exception=True)
+        serializers.save()
+
+        data = {
+            'status': True,
+            'message': "Malumotingiz ozgardi"
+        }
+        return Response(data)
 
 
 
